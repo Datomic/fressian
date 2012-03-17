@@ -1,0 +1,55 @@
+* Objectives
+** efficient
+*** compact
+*** support primitives
+*** avoid copying/boxing
+** general
+** extensible
+** self-describing
+** avoid platform specifics
+* Extensibility
+** fixed set of core types
+** extension types in terms of core types
+*** avoid blobs
+** no type descriptors, just components
+*** enough to skip unknown
+* Core Types
+| Tag    | Fressian | Notes                                            |
+|--------+----------+--------------------------------------------------|
+| null   | null     | not really a type, but possible value everywhere |
+| true   | true     | special value                                    |
+| false  | false    | special value                                    |
+| int    | int      |                                                  |
+| double | double   |                                                  |
+| float  | float    |                                                  |
+| string | string   |                                                  |
+| bytes  | bytes    | array of bytes in user semantics                 |
+| list   | list     |                                                  |
+| struct | struct   | must supply type tag                             |
+* Standard Extension Types
+| Tag     | size | struct        | notes                                     |
+|---------+------+---------------+-------------------------------------------|
+| map     |    1 | list<k,v>     |                                           |
+| set     |    1 | list          |                                           |
+| inst    |    1 | int           | ms since 1970                             |
+| sym     |    2 | string,string |                                           |
+| uuid    |    1 | bytes         |                                           |
+| uri     |    1 | string        |                                           |
+| bigint  |    1 | bytes         | signed, two's complement, msb first       |
+| bigdec  |    2 | bytes,int     | val (as per integer), scale               |
+| regex   |    1 | string        |                                           |
+| sym     |    2 | ns, name      |                                           |
+| key     |    2 | ns, name      |                                           |
+| (array) |    2 | count, vals   | int, long, float, double, boolean, Object |
+* Writer Interface
+** org.fressian.Writer
+** 
+
+* Tagged interface
+In order to support construction, writing and reading of (esp. nested)
+values of types for which there are no mappings, or no unique
+mappings, or coercion is required, a single Tagged type must be
+present. write(Object) must be able to distinguish Tagged objects.
+
+
+
