@@ -1,12 +1,12 @@
 // Copyright (c) Metadata Partners, LLC.
 // All rights reserved.
 
-package org.fressian.handlers;
+package org.fressian.impl;
 
 import org.fressian.*;
+import org.fressian.handlers.*;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static org.fressian.Fns.*;
+import static org.fressian.impl.Fns.*;
 
 public class Handlers {
     public static final Map<String, Integer> tagToCode;

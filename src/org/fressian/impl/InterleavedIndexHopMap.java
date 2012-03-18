@@ -3,11 +3,10 @@
 
 /* rich 1/10/11 */
 
-package org.fressian;
+package org.fressian.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 final public class InterleavedIndexHopMap{
 
@@ -188,7 +187,7 @@ static void report(String label, long ns){
 }
 
 public static void main(String[] args){
-	//java -server -Xmx1024m org.fressian.InterleavedIndexHopMap 1000000
+	//java -server -Xmx1024m org.fressian.impl.InterleavedIndexHopMap 1000000
 
 	int n = Integer.parseInt(args[0]);
 

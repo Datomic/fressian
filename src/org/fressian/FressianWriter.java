@@ -3,8 +3,8 @@
 
 package org.fressian;
 
-import static org.fressian.Fns.*;
-import static org.fressian.handlers.Handlers.*;
+import static org.fressian.impl.Fns.*;
+import static org.fressian.impl.Handlers.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 import org.fressian.handlers.*;
+import org.fressian.impl.*;
 
 public class FressianWriter implements StreamingWriter, Writer, Closeable {
     private OutputStream out;

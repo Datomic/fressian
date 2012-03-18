@@ -1,13 +1,15 @@
 // Copyright (c) Metadata Partners, LLC.
 // All rights reserved.
 
-package org.fressian.handlers;
+package org.fressian.impl;
+
+import org.fressian.handlers.ILookup;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 // could refine to keep track of lookup misses...
-public class CachingLookup <K,V> implements ILookup <K, V>
+public class CachingLookup <K,V> implements ILookup<K, V>
 {
     public final ILookup<K, V> lookup;
     public final ConcurrentHashMap<K, V> map = new ConcurrentHashMap();

@@ -1,7 +1,7 @@
 // Copyright (c) Metadata Partners, LLC.
 // All rights reserved.
 
-package org.fressian;
+package org.fressian.impl;
 
 public class Codes {
     public static final int PRIORITY_CACHE_PACKED_START = 0x80;

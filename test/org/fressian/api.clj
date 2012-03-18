@@ -9,7 +9,7 @@
    java.nio.ByteBuffer
    java.nio.charset.Charset
    [org.fressian FressianWriter StreamingWriter FressianReader Writer Reader]
-   [org.fressian.handlers Handlers WriteHandler ReadHandler ILookup WriteHandlerLookup]
+   [org.fressian.handlers WriteHandler ReadHandler ILookup  WriteHandlerLookup]
    [org.fressian.impl ByteBufferInputStream BytesOutputStream]))
 
 ;; move into get, a la Clojure lookup?

@@ -3,11 +3,15 @@
 
 package org.fressian.handlers;
 
+import org.fressian.impl.CachingLookup;
+import org.fressian.impl.ChainedLookup;
+import org.fressian.impl.Handlers;
+
 import java.util.Map;
 
-import static org.fressian.Fns.getClassOrNull;
-import static org.fressian.Fns.lookup;
-import static org.fressian.Fns.soloEntry;
+import static org.fressian.impl.Fns.getClassOrNull;
+import static org.fressian.impl.Fns.lookup;
+import static org.fressian.impl.Fns.soloEntry;
 
 public class WriteHandlerLookup implements IWriteHandlerLookup {
     public static ILookup<Class, Map<String, WriteHandler>>

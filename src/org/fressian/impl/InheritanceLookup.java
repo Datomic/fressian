@@ -1,13 +1,13 @@
 // Copyright (c) Metadata Partners, LLC.
 // All rights reserved.
 
-package org.fressian.handlers;
+package org.fressian.impl;
 
-import sun.io.CharToByteJIS0212_Solaris;
+import org.fressian.handlers.ILookup;
 
 import java.util.*;
 
-public class InheritanceLookup <V> implements ILookup <Class, V> {
+public class InheritanceLookup <V> implements ILookup<Class, V> {
     private final ILookup<Class, V> lookup;
 
     public InheritanceLookup(ILookup lookup) {

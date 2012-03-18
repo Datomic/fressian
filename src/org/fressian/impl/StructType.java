@@ -1,7 +1,7 @@
 // Copyright (c) Metadata Partners, LLC.
 // All rights reserved.
 
-package org.fressian;
+package org.fressian.impl;
 
 public class StructType {
     public final Object tag;

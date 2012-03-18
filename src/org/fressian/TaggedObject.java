@@ -3,6 +3,8 @@
 
 package org.fressian;
 
+import org.fressian.Tagged;
+
 import java.util.Map;
 
 public class TaggedObject implements Tagged {

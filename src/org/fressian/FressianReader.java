@@ -4,11 +4,12 @@
 package org.fressian;
 
 import org.fressian.handlers.*;
+import org.fressian.impl.*;
 
 import java.io.*;
 import java.util.*;
 
-import static org.fressian.Fns.*;
+import static org.fressian.impl.Fns.*;
 
 public class FressianReader implements Reader, Closeable {
     private final RawInput is;

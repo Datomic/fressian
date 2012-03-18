@@ -1,9 +1,11 @@
 // Copyright (c) Metadata Partners, LLC.
 // All rights reserved.
 
-package org.fressian.handlers;
+package org.fressian.impl;
 
-public class ChainedLookup <K,V> implements ILookup <K, V>
+import org.fressian.handlers.ILookup;
+
+public class ChainedLookup <K,V> implements ILookup<K, V>
 {
     public final ILookup<K, V> lookups [];
     public ChainedLookup(ILookup<K,V>... lookups) {

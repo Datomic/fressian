@@ -1,11 +1,13 @@
 // Copyright (c) Metadata Partners, LLC.
 // All rights reserved.
 
-package org.fressian.handlers;
+package org.fressian.impl;
+
+import org.fressian.handlers.ILookup;
 
 import java.util.Map;
 
-public class MapLookup <K,V> implements ILookup <K, V>
+public class MapLookup <K,V> implements ILookup<K, V>
 {
     public final Map<K, V> map;
 
