@@ -865,9 +865,16 @@ public class FressianReader implements Reader, Closeable {
         }
     }
 
+    // placeholder for objects still being read in
+    static private Object UNDER_CONSTRUCTION = new Object();
+
     private Object lookupCache(ArrayList cache, int index) {
         if (index < cache.size()) {
-            return cache.get(index);
+            Object result = cache.get(index);
+            if (result == UNDER_CONSTRUCTION)
+                throw new RuntimeException("Unable to resolve circular reference in cache");
+            else
+                return result;
         } else {
             throw new RuntimeException("Requested object beyond end of cache at " + index);
         }
@@ -916,8 +923,10 @@ public class FressianReader implements Reader, Closeable {
     }
 
     private Object readAndCacheObject(ArrayList cache) throws IOException {
+        int index = cache.size();
+        cache.add(UNDER_CONSTRUCTION);
         Object o = readObject();
-        cache.add(o);
+        cache.set(index, o);
         return o;
     }
 
