@@ -43,8 +43,6 @@
 | (array) |    2 | count, vals   | int, long, float, double, boolean, Object |
 * Writer Interface
 ** org.fressian.Writer
-** 
-
 * Tagged interface
 In order to support construction, writing and reading of (esp. nested)
 values of types for which there are no mappings, or no unique
