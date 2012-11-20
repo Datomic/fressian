@@ -1,8 +1,10 @@
 ## What is Fressian? 
 
-Fressian is an extensible binary data notation. It shares many design
-objectives with [edn](https://github.com/edn-format/edn), but also has
-the additional goal of high performance.
+Fressian is an extensible binary data notation. It is inspired by, and
+shares many design objectives with
+[hessian](http://hessian.caucho.com/) and
+(https://github.com/edn-format/edn) and
+[edn](https://github.com/edn-format/edn)
 
 ## Getting Started
 
