@@ -1,0 +1,11 @@
+set -e
+
+git checkout master
+rm -rf javadoc
+javadoc -sourcepath src -d tmpdoc org.fressian org.fressian.handlers
+git checkout gh-pages
+cp -r tmpdoc/ javadoc
+rm -rf tmpdoc
+git add javadoc
+git commit -a -m 'generated javadoc'
+git checkout master
