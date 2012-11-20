@@ -9,11 +9,41 @@
   <artifactId>fressian</artifactId>
   <version>0.6.2</version>
   <name>${project.artifactId}</name>
+  <packaging>jar</packaging>
+  <description>Fressian is an extensible binary data notation.</description>
+  <url>http://github.com/Datomic/fressian</url>
+
+  <developers>
+    <developer>
+      <name>Stuart Halloway</name>
+      <email>stu@datomic.com</email>
+      <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <name>Rich Hickey</name>
+      <email>richhickey@gmail.com</email>
+      <timezone>-5</timezone>
+    </developer>
+  </developers>
 
   <organization>
     <name>Metadata Partners, LLC</name>
     <url>http://www.metadatapartners.com/</url>
   </organization>
+
+  <licenses>
+    <license>
+      <name>Eclipse Public License 1.0</name>
+      <url>http://opensource.org/licenses/eclipse-1.0.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:Datomic/fressian.git</connection>
+    <developerConnection>scm:git:git@github.com:Datomic/fressian.git</developerConnection>
+    <url>git@github.com:Datomic/fressian.git</url>
+  </scm>
 
   <properties> 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
@@ -33,6 +63,12 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+    <parent>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
+    </parent>
 
   <build>
     <sourceDirectory>${basedir}/src</sourceDirectory>
