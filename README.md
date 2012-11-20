@@ -3,7 +3,6 @@
 Fressian is an extensible binary data notation. It is inspired by, and
 shares many design objectives with
 [hessian](http://hessian.caucho.com/) and
-(https://github.com/edn-format/edn) and
 [edn](https://github.com/edn-format/edn)
 
 ## Getting Started
