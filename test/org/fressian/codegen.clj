@@ -2,7 +2,8 @@
 ;; All rights reserved.
 
 (ns org.fressian.codegen
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.pprint :refer (print-table)]))
 
 (def sizes
   (into (sorted-map)
@@ -14,61 +15,78 @@
          :PACKED_7 50}))
 
 (def codes
-  [[:PRIORITY_CACHE_PACKED [0x80 0xA0]]
-   [:STRUCT_CACHE_PACKED [0xA0 0xB0]]
-   [:LONG_ARRAY 0xB0]
-   [:DOUBLE_ARRAY 0xB1]
-   [:BOOLEAN_ARRAY 0xB2]
-   [:INT_ARRAY 0xB3]
-   [:FLOAT_ARRAY 0xB4]
-   [:OBJECT_ARRAY 0xB5]
-   [:MAP 0xC0]
-   [:SET 0xC1]
-   [:UUID 0xC3]
-   [:REGEX 0xC4]
-   [:URI 0xC5]
-   [:BIGINT 0xC6]
-   [:BIGDEC 0xC7]
-   [:INST 0xC8]
-   [:SYM 0xC9]
-   [:KEY 0xCA]
-   [:GET_PRIORITY_CACHE 0xCC]
-   [:PUT_PRIORITY_CACHE 0xCD]
-   [:PRECACHE 0xCE]   
-   [:FOOTER 0xCF]
-   [:FOOTER_MAGIC 0xCFCFCFCF]
-   [:BYTES_PACKED_LENGTH [0xD0 0xD8]]
-   [:BYTES_CHUNK 0xD8]
-   [:BYTES 0xD9]
-   [:STRING_PACKED_LENGTH [0xDA 0xE2]]
-   [:STRING_CHUNK 0xE2]
-   [:STRING 0xE3]
-   [:LIST_PACKED_LENGTH [0xE4 0xEC]]
-   [:LIST 0xEC]
-   [:BEGIN_CLOSED_LIST 0xED]
-   [:BEGIN_OPEN_LIST 0xEE]
-   [:STRUCTTYPE 0xEF]
-   [:STRUCT 0xF0]
-   [:META 0xF1]
-   [:ANY 0xF4]   
-   [:TRUE 0xF5]
-   [:FALSE 0xF6]
-   [:NULL 0xF7]
-   [:INT 0xF8]
-   [:FLOAT 0xF9]
-   [:DOUBLE 0xFA]
-   [:DOUBLE_0 0xFB]
-   [:DOUBLE_1 0xFC]
-   [:END_COLLECTION 0xFD]
-   [:RESET_CACHES 0xFE]
+  [[:PRIORITY_CACHE_PACKED [0x80 0xA0] "Single byte codes for user-cached data"]
+   [:STRUCT_CACHE_PACKED [0xA0 0xB0] "Single byte codes for tagged structure descriptors."]
+   [:LONG_ARRAY 0xB0 "Array of primitive longs"]
+   [:DOUBLE_ARRAY 0xB1 "Array of primitive doubles"]
+   [:BOOLEAN_ARRAY 0xB2 "Array of primitive booleans"]
+   [:INT_ARRAY 0xB3 "Array of primitive ints"]
+   [:FLOAT_ARRAY 0xB4 "Array of primitive floats"]
+   [:OBJECT_ARRAY 0xB5 "Array of objects"]
+   [:MAP 0xC0 "Heterogeneous map"]
+   [:SET 0xC1 "Heterogeneous set"]
+   [:UUID 0xC3 "UUID"]
+   [:REGEX 0xC4 "Regular expression"]
+   [:URI 0xC5 "URI"]
+   [:BIGINT 0xC6 "Arbitrary precision integer"]
+   [:BIGDEC 0xC7 "Arbitrary precision decimal"]
+   [:INST 0xC8 "Instant in time "]
+   [:SYM 0xC9 "Namespaced symbol"]
+   [:KEY 0xCA "Namespaced keyword"]
+   [:GET_PRIORITY_CACHE 0xCC "Lead byte for multibyte-encoded user cache entries."]
+   [:PUT_PRIORITY_CACHE 0xCD "Object that follows should be added to priority cache"]
+   [:PRECACHE 0xCE "Cache an object now, without actually making it appear to reader"]   
+   [:FOOTER 0xCF "Optional footer signalling end of fressian data"]
+   [:FOOTER_MAGIC 0xCFCFCFCF "Repetition of footer code"]
+   [:BYTES_PACKED_LENGTH [0xD0 0xD8] "Packed byte array"]
+   [:BYTES_CHUNK 0xD8 "Chunk of a byte arrays"]
+   [:BYTES 0xD9 "Unpacked byte array"]
+   [:STRING_PACKED_LENGTH [0xDA 0xE2] "Packed string"]
+   [:STRING_CHUNK 0xE2 "Chunk of a string"]
+   [:STRING 0xE3 "Unpacked string"]
+   [:LIST_PACKED_LENGTH [0xE4 0xEC] "Packed string"]
+   [:LIST 0xEC "Unpacked list"]
+   [:BEGIN_CLOSED_LIST 0xED "Variable length list, expect termination with END_COLLECTION"]
+   [:BEGIN_OPEN_LIST 0xEE "Variable length list, terminate with END_COLLECTION or end of stream"]
+   [:STRUCTTYPE 0xEF "Structure, followed by tag and component count"]
+   [:STRUCT 0xF0 "Reference to a cached structure"]
+   [:META 0xF1 "Metadata (currently unused)"]
+   [:ANY 0xF4 "Placeholder code for data that could be anything"]   
+   [:TRUE 0xF5 "Boolean true"]
+   [:FALSE 0xF6 "Boolean false"]
+   [:NULL 0xF7 "Null / nil"]
+   [:INT 0xF8 "Unpacked int"]
+   [:FLOAT 0xF9 "Float"]
+   [:DOUBLE 0xFA "Double"]
+   [:DOUBLE_0 0xFB "The double value 0.0"]
+   [:DOUBLE_1 0xFC "The double value 1.0"]
+   [:END_COLLECTION 0xFD "End an open collection"]
+   [:RESET_CACHES 0xFE "Reset cache codes"]
 
-   [:INT_PACKED_1 [0xFF 0x40]]
-   [:INT_PACKED_2 [0x40 0x50 0x60]]
-   [:INT_PACKED_3 [0x60 0x68 0x70]]
-   [:INT_PACKED_4 [0x70 0x72 0x74]]
-   [:INT_PACKED_5 [0x74 0x76 0x78]]
-   [:INT_PACKED_6 [0x78 0x7A 0x7C]]
-   [:INT_PACKED_7 [0x7C 0x7E 0x80]]])
+   [:INT_PACKED_1 [0xFF 0x40] "Integer packed into a single byte"]
+   [:INT_PACKED_2 [0x40 0x50 0x60] "Integer packed into two bytes"]
+   [:INT_PACKED_3 [0x60 0x68 0x70] "Integer packed into three bytes"]
+   [:INT_PACKED_4 [0x70 0x72 0x74] "Integer packed into four bytes"]
+   [:INT_PACKED_5 [0x74 0x76 0x78] "Integer packed into five bytes"]
+   [:INT_PACKED_6 [0x78 0x7A 0x7C] "Integer packed into six bytes"]
+   [:INT_PACKED_7 [0x7C 0x7E 0x80] "Integer packed into seven bytes"]])
+
+(defn hex
+  [x]
+  (if (number? x)
+    (Long/toHexString x)
+    (str/join " - " (mapv hex x))))
+
+(defn codes->org
+  [codes]
+  (println "#+OPTIONS: ^:nil")
+  (->> (map
+        (fn [[code range doc]]
+          {"Code" (name code)
+           "Range" (hex range)
+           "Notes" doc})
+        codes)
+       (print-table ["Code" "Range" "Notes"])))
 
 (defn code-type
   [code]
