@@ -101,11 +101,11 @@
    vector of results."
   [^Reader fin]
   (let [sentinel (Object.)]
-    (loop [objects []]
+    (loop [objects (transient [])]
       (let [obj (try (.readObject fin) (catch EOFException e sentinel))]
         (if (= obj sentinel)
-          objects
-          (recur (conj objects obj)))))))
+          (persistent! objects)
+          (recur (conj! objects obj)))))))
 
 (def clojure-write-handlers
   {clojure.lang.Keyword
