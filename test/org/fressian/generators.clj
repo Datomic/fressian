@@ -4,7 +4,7 @@
 (ns org.fressian.generators
   (:refer-clojure :exclude [symbol keyword])
   (:import org.fressian.TaggedObject)
-  (:require [clojure.test.generative.generators :as gen]
+  (:require [clojure.data.generators :as gen]
             [clojure.core :as core]))
 
 (defn uuid
@@ -137,7 +137,12 @@
    rules, which have boundary conditions near power-of-2 boundaries."
   (->> (range 0 63)
        (map #(long (Math/pow 2 %)))
-       (mapcat (fn [x] [(- x 2) (dec x) x (inc x) (+ x 2)]))))
+       (mapcat (fn [x] [(- x 2) (dec x) x (inc x) (+ x 2)]))
+       (into [])))
+
+(defn long-near-power-of-2
+  []
+  (gen/rand-nth longs-near-powers-of-2))
 
 
 

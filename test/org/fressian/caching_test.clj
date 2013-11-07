@@ -5,7 +5,7 @@
   (:use [clojure.test.generative :only (defspec) :as test]
         [org.fressian.test-helpers :only (assert=) :as th])
   (:require [org.fressian.generators :as gen]
-            [clojure.test.generative.generators :as tgen]
+            [clojure.data.generators :as tgen]
             [org.fressian.api :as fressian])
   (:import [org.fressian.impl BytesOutputStream]))
 

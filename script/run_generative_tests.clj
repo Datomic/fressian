@@ -1,15 +1,8 @@
 (set! *warn-on-reflection* true)
+(when-not (System/getProperty "clojure.test.generative.msec")
+  (System/setProperty "clojure.test.generative.msec" "30000"))
+(require '[clojure.test.generative.runner :as runner])
+(runner/-main "test")
 
-(use '[clojure.test.generative])
-(try
- (binding [*msec* 10000]
-   (let [futures (test-dirs "test")]
-     (doseq [f futures]
-       @f)))
- (catch Throwable t
-   (.printStackTrace t)
-   (System/exit -1))
- (finally
-  (shutdown-agents)))
 
 

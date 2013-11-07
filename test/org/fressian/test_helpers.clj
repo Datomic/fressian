@@ -6,7 +6,7 @@
   (:require [clojure.walk :as walk]
             [clojure.java.io :as io]
             [clojure.data :as data]
-            [clojure.test.generative.generators :as gen]
+            [clojure.data.generators :as gen]
             [clojure.java.shell :as sh]
             [org.fressian.api :as fressian])
   (:import [java.io IOException Closeable]

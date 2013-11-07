@@ -38,7 +38,7 @@
 
 (defspec fressian-int-packing
   roundtrip
-  [^{:tag `gen/longs-near-powers-of-2} input]
+  [^{:tag `gen/long-near-power-of-2} input]
   (assert (= input %)))
 
 (defspec fressian-names
