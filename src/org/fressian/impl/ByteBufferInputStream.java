@@ -27,6 +27,21 @@ public class ByteBufferInputStream extends InputStream {
     }
 
     @Override
+    public synchronized void reset() throws IOException {
+        buf.reset();
+    }
+
+    @Override
+    public synchronized void mark(int readlimit) {
+        buf.mark();
+    }
+
+    @Override
+    public boolean markSupported() {
+        return true;
+    }
+
+    @Override
     public int read() throws IOException {
         if (!buf.hasRemaining()) {
             return -1;
