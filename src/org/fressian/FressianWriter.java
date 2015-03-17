@@ -494,7 +494,6 @@ public class FressianWriter implements StreamingWriter, Writer, Closeable {
         if (0 != rawOut.getBytesWritten())
             throw new IllegalStateException("openList must be called from the top level, outside any footer context.");
         writeCode(Codes.BEGIN_OPEN_LIST);
-        rawOut.reset();
         return this;
     }
 }

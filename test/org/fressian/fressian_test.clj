@@ -6,7 +6,9 @@
         [org.fressian.test-helpers :only (assert=)])
   (:require [org.fressian.generators :as gen]
             [org.fressian.api :as fressian])
-  (:import [org.fressian.impl BytesOutputStream]))
+  (:import
+   [org.fressian StreamingWriter]
+   [org.fressian.impl BytesOutputStream]))
 
 (set! *warn-on-reflection* true)
 
@@ -18,6 +20,27 @@
      (-> o
          (fressian/byte-buf :handlers write-handlers)
          (fressian/defressian :handlers read-handlers))))
+
+(defn roundtrip-footer
+  "Fressian and defressian o with footer"
+  ([o]
+     (-> o (fressian/byte-buf :footer true) fressian/defressian))
+  ([o write-handlers read-handlers]
+     (-> o
+         (fressian/byte-buf :handlers write-handlers :footer true)
+         (fressian/defressian :handlers read-handlers))))
+
+(defn roundtrip-open-list-footer
+  "Fressian and defressian o inside an open list with footer"
+  [o]
+  (let [baos (BytesOutputStream.)
+        fw (fressian/create-writer baos)]
+    (.beginOpenList ^StreamingWriter fw)
+    (.writeObject fw o)
+    (.endList ^StreamingWriter fw)
+    (.writeFooter fw)
+    (first (fressian/defressian (fressian/bytestream->buf baos)
+             :footer true))))
 
 (defspec fressian-character-encoding
   roundtrip
@@ -33,6 +56,16 @@
 ;; fressian types
 (defspec fressian-builtins
   roundtrip
+  [^{:tag `gen/fressian-builtin} s]
+  (assert= s %))
+
+(defspec fressian-builtins-with-footer
+  roundtrip-footer
+  [^{:tag `gen/fressian-builtin} s]
+  (assert= s %))
+
+(defspec fressian-open-list-with-footer
+  roundtrip-open-list-footer
   [^{:tag `gen/fressian-builtin} s]
   (assert= s %))
 
