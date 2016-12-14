@@ -47,6 +47,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
   </properties> 
 
+  <distributionManagement>
+    <snapshotRepository>
+      <!-- This id is linked to the key setup on the CI server -->
+      <id>sonatype-nexus-staging-datomic</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
