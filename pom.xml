@@ -50,7 +50,7 @@
   <distributionManagement>
     <snapshotRepository>
       <!-- This id is linked to the key setup on the CI server -->
-      <id>sonatype-nexus-staging-datomic</id>
+      <id>sonatype-nexus-staging-fressian</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
@@ -132,7 +132,7 @@
         <extensions>true</extensions>
         <configuration>
           <!-- The server "id" element from settings to use authentication from -->
-          <serverId>sonatype-nexus-staging-datomic</serverId>
+          <serverId>sonatype-nexus-staging-fressian</serverId>
           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
