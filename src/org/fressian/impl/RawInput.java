@@ -11,9 +11,8 @@ package org.fressian.impl;
 import java.io.*;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
-import java.util.zip.Checksum;
 
-public class RawInput implements Closeable {
+public class RawInput implements IRawInput {
     private final InputStream is;
     private final CheckedInputStream cis;
     private final DataInputStream dis;

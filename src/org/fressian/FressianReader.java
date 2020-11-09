@@ -17,7 +17,8 @@ import java.util.*;
 import static org.fressian.impl.Fns.*;
 
 public class FressianReader implements Reader, Closeable {
-    private final RawInput is;
+    private final IRawInput is;
+    private final boolean validateAdler;
     private ArrayList priorityCache;
     private ArrayList structCache;
     public final Map standardExtensionHandlers;
@@ -34,9 +35,17 @@ public class FressianReader implements Reader, Closeable {
 
     public FressianReader(InputStream is, ILookup<Object, ReadHandler> handlerLookup, boolean validateAdler) {
         standardExtensionHandlers = Handlers.extendedReadHandlers;
-        this.is = new RawInput(is, validateAdler);
+        IRawInput input = new RawInput(is, validateAdler);
+        this.is = input;
+        this.validateAdler = validateAdler;
         this.handlerLookup = handlerLookup;
-        resetCaches();
+    }
+
+    public FressianReader(IRawInput input, ILookup<Object, ReadHandler> handlerLookup) {
+        standardExtensionHandlers = Handlers.extendedReadHandlers;
+        this.is = input;
+        this.validateAdler = false;
+        this.handlerLookup = handlerLookup;
     }
 
     public boolean readBoolean() throws IOException {
@@ -654,10 +663,7 @@ public class FressianReader implements Reader, Closeable {
                 break;
 
             case Codes.FOOTER: {
-                int calculatedLength = is.getBytesRead() - 1;
-                int magicFromStream = (int) ((code << 24) + (int) is.readRawInt24());
-                validateFooter(calculatedLength, magicFromStream);
-                return readObject();
+                return readPastFooter();
             }
             case Codes.STRUCTTYPE: {
                 Object tag = readObject();
@@ -683,6 +689,16 @@ public class FressianReader implements Reader, Closeable {
                 throw expected("any", code);
         }
         return result;
+    }
+
+    private Object readPastFooter() throws IOException {
+        int magicFromStream = (int) ((Codes.FOOTER << 24) + (int) is.readRawInt24());
+        int lengthFromStream = (int) is.readRawInt32();
+        if (validateAdler) {
+            int calculatedLength = is.getBytesRead() - 8;
+            validateFooter(calculatedLength, magicFromStream, lengthFromStream);
+        }
+        return readObject();
     }
 
     private Object handleStruct(Object tag, int fields) throws IOException {
@@ -889,16 +905,17 @@ public class FressianReader implements Reader, Closeable {
         return ((ConvertList) getHandler("list")).convertList(readObjects(length));
     }
 
-    private void validateFooter(int calculatedLength, int magicFromStream) throws IOException {
+    private void validateFooter(int calculatedLength, int magicFromStream, int lengthFromStream) throws IOException {
         if (magicFromStream != Codes.FOOTER_MAGIC) {
             throw new RuntimeException(String.format("Invalid footer magic, expected %X got %X", Codes.FOOTER_MAGIC, magicFromStream));
         }
-        int lengthFromStream = (int) is.readRawInt32();
         if (lengthFromStream != calculatedLength) {
             throw new RuntimeException(String.format("Invalid footer length, expected %X got %X", calculatedLength, lengthFromStream));
         }
-        is.validateChecksum();
-        is.reset();
+        if (validateAdler) {
+            is.validateChecksum();
+            is.reset();
+        }
         resetCaches();
     }
 
@@ -917,10 +934,14 @@ public class FressianReader implements Reader, Closeable {
         if (structCache != null) structCache.clear();
     }
 
+    // N.B. this merely skips over the footer when checksum is disabled
     public void validateFooter() throws IOException {
-        int calculatedLength = is.getBytesRead();
         int magicFromStream = (int) is.readRawInt32();
-        validateFooter(calculatedLength, magicFromStream);
+        int lengthFromStream = (int) is.readRawInt32();
+        if (validateAdler) {
+            int calculatedLength = is.getBytesRead() - 8;
+            validateFooter(calculatedLength, magicFromStream, lengthFromStream);
+        }
     }
 
     private int readNextCode() throws IOException {
