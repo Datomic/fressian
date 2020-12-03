@@ -6,8 +6,8 @@
 //   the terms of this license.
 //   You must not remove this notice, or any other, from this software.
 
-package org.fressian.handlers;
+package org.fressian.converters;
 
-public interface ConvertFloat {
-    public Object convertFloat(float f);
+public interface IConvertBytes {
+    public Object convertBytes(byte[] bytes);
 }

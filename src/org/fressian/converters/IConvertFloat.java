@@ -6,10 +6,8 @@
 //   the terms of this license.
 //   You must not remove this notice, or any other, from this software.
 
-package org.fressian.handlers;
+package org.fressian.converters;
 
-import java.util.List;
-
-public interface ConvertList {
-    public List convertList(Object[] items);
+public interface IConvertFloat {
+    public Object convertFloat(float f);
 }

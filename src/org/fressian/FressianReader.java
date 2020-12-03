@@ -8,6 +8,10 @@
 
 package org.fressian;
 
+import org.fressian.converters.IConvertBytes;
+import org.fressian.converters.IConvertDouble;
+import org.fressian.converters.IConvertFloat;
+import org.fressian.converters.IConvertList;
 import org.fressian.handlers.*;
 import org.fressian.impl.*;
 
@@ -620,11 +624,11 @@ public class FressianReader implements Reader, Closeable {
                 break;
 
             case Codes.BEGIN_CLOSED_LIST:
-                result = ((ConvertList) getHandler("list")).convertList(readClosedList());
+                result = ((IConvertList) getHandler("list")).convertList(readClosedList());
                 break;
 
             case Codes.BEGIN_OPEN_LIST:
-                result = ((ConvertList) getHandler("list")).convertList(readOpenList());
+                result = ((IConvertList) getHandler("list")).convertList(readOpenList());
                 break;
 
             case Codes.TRUE:
@@ -638,11 +642,11 @@ public class FressianReader implements Reader, Closeable {
             case Codes.DOUBLE:
             case Codes.DOUBLE_0:
             case Codes.DOUBLE_1:
-                result = ((ConvertDouble) getHandler("double")).convertDouble(internalReadDouble(code));
+                result = ((IConvertDouble) getHandler("double")).convertDouble(internalReadDouble(code));
                 break;
 
             case Codes.FLOAT:
-                result = ((ConvertFloat) getHandler("float")).convertFloat(is.readRawFloat());
+                result = ((IConvertFloat) getHandler("float")).convertFloat(is.readRawFloat());
                 break;
 
             case Codes.INT:
@@ -886,7 +890,7 @@ public class FressianReader implements Reader, Closeable {
     }
 
     private List internalReadList(int length) throws IOException {
-        return ((ConvertList) getHandler("list")).convertList(readObjects(length));
+        return ((IConvertList) getHandler("list")).convertList(readObjects(length));
     }
 
     private void validateFooter(int calculatedLength, int magicFromStream) throws IOException {
@@ -939,25 +943,25 @@ public class FressianReader implements Reader, Closeable {
 
     static {
         HashMap handlers = new HashMap();
-        handlers.put("list", new ConvertList() {
+        handlers.put("list", new IConvertList() {
             public List convertList(Object[] items) {
                 return Arrays.asList(items);
             }
         });
 
-        handlers.put("bytes", new ConvertBytes() {
+        handlers.put("bytes", new IConvertBytes() {
             public Object convertBytes(byte[] bytes) {
                 return bytes;
             }
         });
 
-        handlers.put("double", new ConvertDouble() {
+        handlers.put("double", new IConvertDouble() {
             public Object convertDouble(double d) {
                 return Double.valueOf(d);
             }
         });
 
-        handlers.put("float", new ConvertFloat() {
+        handlers.put("float", new IConvertFloat() {
             public Object convertFloat(float f) {
                 return Float.valueOf(f);
             }
