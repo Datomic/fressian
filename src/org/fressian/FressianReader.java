@@ -26,6 +26,7 @@ public class FressianReader implements Reader, Closeable {
     private ArrayList structCache;
     public final Map standardExtensionHandlers;
     private final ILookup<Object, ReadHandler> handlerLookup;
+    private final IConvertList listConverter;
     private byte[] byteBuffer;
 
     public FressianReader(InputStream is) {
@@ -40,6 +41,7 @@ public class FressianReader implements Reader, Closeable {
         standardExtensionHandlers = Handlers.extendedReadHandlers;
         this.is = new RawInput(is, validateAdler);
         this.handlerLookup = handlerLookup;
+        this.listConverter = (IConvertList) ((handlerLookup instanceof IConvertList) ? handlerLookup : getHandler("list"));
         resetCaches();
     }
 
@@ -624,11 +626,11 @@ public class FressianReader implements Reader, Closeable {
                 break;
 
             case Codes.BEGIN_CLOSED_LIST:
-                result = ((IConvertList) getHandler("list")).convertList(readClosedList());
+                result = listConverter.convertList(readClosedList());
                 break;
 
             case Codes.BEGIN_OPEN_LIST:
-                result = ((IConvertList) getHandler("list")).convertList(readOpenList());
+                result = listConverter.convertList(readOpenList());
                 break;
 
             case Codes.TRUE:
@@ -890,7 +892,7 @@ public class FressianReader implements Reader, Closeable {
     }
 
     private List internalReadList(int length) throws IOException {
-        return ((IConvertList) getHandler("list")).convertList(readObjects(length));
+        return listConverter.convertList(readObjects(length));
     }
 
     private void validateFooter(int calculatedLength, int magicFromStream) throws IOException {
