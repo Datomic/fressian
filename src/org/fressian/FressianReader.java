@@ -41,7 +41,7 @@ public class FressianReader implements Reader, Closeable {
         standardExtensionHandlers = Handlers.extendedReadHandlers;
         this.is = new RawInput(is, validateAdler);
         this.handlerLookup = handlerLookup;
-        this.listConverter = (IConvertList) ((handlerLookup instanceof IConvertList) ? handlerLookup : getHandler("list"));
+        this.listConverter = (IConvertList) ((handlerLookup instanceof IConvertList) ? handlerLookup : defaultListConverter);
         resetCaches();
     }
 
@@ -644,11 +644,11 @@ public class FressianReader implements Reader, Closeable {
             case Codes.DOUBLE:
             case Codes.DOUBLE_0:
             case Codes.DOUBLE_1:
-                result = ((IConvertDouble) getHandler("double")).convertDouble(internalReadDouble(code));
+                result = defaultDoubleConverter.convertDouble(internalReadDouble(code));
                 break;
 
             case Codes.FLOAT:
-                result = ((IConvertFloat) getHandler("float")).convertFloat(is.readRawFloat());
+                result = defaultFloatConverter.convertFloat(is.readRawFloat());
                 break;
 
             case Codes.INT:
@@ -786,14 +786,6 @@ public class FressianReader implements Reader, Closeable {
             pos += chunks.get(n).length;
         }
         return result;
-    }
-
-    private Object getHandler(String tag) {
-        Object o = coreHandlers.get(tag);
-        if (o == null) {
-            throw new RuntimeException("No read handler for type " + tag);
-        }
-        return o;
     }
 
     private double internalReadDouble(int code) throws IOException {
@@ -941,34 +933,21 @@ public class FressianReader implements Reader, Closeable {
         return o;
     }
 
-    public static final Map coreHandlers;
+    public static final IConvertList defaultListConverter = new IConvertList() {
+        public List convertList(Object[] items) {
+            return Arrays.asList(items);
+        }
+    };
 
-    static {
-        HashMap handlers = new HashMap();
-        handlers.put("list", new IConvertList() {
-            public List convertList(Object[] items) {
-                return Arrays.asList(items);
-            }
-        });
+    public static final IConvertDouble defaultDoubleConverter = new IConvertDouble() {
+        public Object convertDouble(double d) {
+            return Double.valueOf(d);
+        }
+    };
 
-        handlers.put("bytes", new IConvertBytes() {
-            public Object convertBytes(byte[] bytes) {
-                return bytes;
-            }
-        });
-
-        handlers.put("double", new IConvertDouble() {
-            public Object convertDouble(double d) {
-                return Double.valueOf(d);
-            }
-        });
-
-        handlers.put("float", new IConvertFloat() {
-            public Object convertFloat(float f) {
-                return Float.valueOf(f);
-            }
-        });
-        coreHandlers = Collections.unmodifiableMap(handlers);
-    }
-
+    public static final IConvertFloat defaultFloatConverter = new IConvertFloat() {
+        public Object convertFloat(float f) {
+            return Float.valueOf(f);
+        }
+    };
 }
