@@ -45,7 +45,7 @@ public class WriteHandlerLookup implements IWriteHandlerLookup {
     public WriteHandler requireWriteHandler(String tag, Object o) {
         WriteHandler handler = getWriteHandler(tag, o);
         if (handler == null)
-            throw new IllegalArgumentException("Cannot write " + o + " as tag " + tag);
+            throw new IllegalArgumentException("Cannot write " + o + " " + "[" + o.getClass() + "] as tag '" + tag + "'");
         return handler;
     }
 
