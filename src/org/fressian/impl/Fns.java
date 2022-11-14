@@ -79,11 +79,13 @@ public class Fns {
         return i;
     }
 
-    public static void readUTF8Chars(StringBuffer dest, byte[] source, int offset, int length) {
-        for (int pos = offset; pos < length;) {
+    public static void readUTF8Chars(StringBuffer dest, byte[] source, int offset, int end) {
+        char[] chars = new char[end-offset];
+        int cCount = 0;
+        for (int pos = offset; pos < end;) {
             int ch = (int)source[pos++] & 0xff;
             switch (ch >> 4)
-                {                       
+                {
                 case 0:
                 case 1:
                 case 2:
@@ -92,27 +94,28 @@ public class Fns {
                 case 5:
                 case 6:
                 case 7:
-                    dest.append((char)ch);
+                    chars[cCount++] = (char)ch;
                     break;
                 case 12:
                 case 13:
                     {
                     int ch1 = source[pos++];
-                    dest.append( (char) ((ch & 0x1f) << 6 | ch1 & 0x3f) );
+                    chars[cCount++] = (char) ((ch & 0x1f) << 6 | ch1 & 0x3f);
                     }
                     break;
                 case 14:
                     {
                     int ch1 = source[pos++];
                     int ch2 = source[pos++];
-                    dest.append( (char) ((ch & 0x0f) << 12 | (ch1 & 0x3f) << 6 | ch2 & 0x3f) );
+                    chars[cCount++] = (char) ((ch & 0x0f) << 12 | (ch1 & 0x3f) << 6 | ch2 & 0x3f);
                     }
                     break;
                 default:
                     throw new RuntimeException(String.format("Invalid UTF-8: %X", ch));
                 }
             }
-        }
+        dest.append(chars, 0, cCount);
+    }
 
     public static int utf8EncodingSize(int ch) {
         if (ch <= 0x007f)
