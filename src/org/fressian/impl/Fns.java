@@ -79,7 +79,7 @@ public class Fns {
         return i;
     }
 
-    public static void readUTF8Chars(StringBuffer dest, byte[] source, int offset, int end) {
+    public static void readUTF8Chars(StringBuilder dest, byte[] source, int offset, int end) {
         char[] chars = new char[end-offset];
         int cCount = 0;
         for (int pos = offset; pos < end;) {

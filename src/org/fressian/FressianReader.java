@@ -707,11 +707,11 @@ public class FressianReader implements Reader, Closeable {
         return intCast(readInt());
     }
 
-    private StringBuffer internalReadString(int length) throws IOException {
-        return internalReadStringBuffer(new StringBuffer(length), length);
+    private StringBuilder internalReadString(int length) throws IOException {
+        return internalReadStringBuilder(new StringBuilder(length), length);
     }
 
-    private StringBuffer internalReadStringBuffer(StringBuffer buf, int length) throws IOException {
+    private StringBuilder internalReadStringBuilder(StringBuilder buf, int length) throws IOException {
         if ((byteBuffer == null) || (byteBuffer.length < length))
             byteBuffer = new byte[length];
         is.readFully(byteBuffer, 0, length);
@@ -720,7 +720,7 @@ public class FressianReader implements Reader, Closeable {
     }
 
     private String internalReadChunkedString(int length) throws IOException {
-        StringBuffer buf = internalReadString(length);
+        StringBuilder buf = internalReadString(length);
         boolean done = false;
         while (!done) {
             int code = readNextCode();
@@ -733,17 +733,17 @@ public class FressianReader implements Reader, Closeable {
                 case Codes.STRING_PACKED_LENGTH_START + 5:
                 case Codes.STRING_PACKED_LENGTH_START + 6:
                 case Codes.STRING_PACKED_LENGTH_START + 7:
-                    internalReadStringBuffer(buf, code - Codes.STRING_PACKED_LENGTH_START).toString();
+                    internalReadStringBuilder(buf, code - Codes.STRING_PACKED_LENGTH_START).toString();
                     done = true;
                     break;
 
                 case Codes.STRING:
-                    internalReadStringBuffer(buf, readCount());
+                    internalReadStringBuilder(buf, readCount());
                     done = true;
                     break;
 
                 case Codes.STRING_CHUNK:
-                    internalReadStringBuffer(buf, readCount());
+                    internalReadStringBuilder(buf, readCount());
                     break;
                 default:
                     throw expected("chunked string", code);
