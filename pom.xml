@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.fressian</groupId>
   <artifactId>fressian</artifactId>
-  <version>0.6.7</version>
+  <version>0.6.8-SNAPSHOT</version>
   <name>fressian</name>
   <packaging>jar</packaging>
   <description>Fressian is an extensible binary data notation.</description>
@@ -41,7 +41,7 @@
     <connection>scm:git:git@github.com:Datomic/fressian.git</connection>
     <developerConnection>scm:git:git@github.com:Datomic/fressian.git</developerConnection>
     <url>git@github.com:Datomic/fressian.git</url>
-    <tag>fressian-0.6.7</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties> 
