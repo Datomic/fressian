@@ -14,7 +14,7 @@
   <developers>
     <developer>
       <name>Stuart Halloway</name>
-      <email>stu@datomic.com</email>
+      <email>stu@cognitect.com</email>
       <timezone>-5</timezone>
     </developer>
     <developer>
@@ -25,8 +25,8 @@
   </developers>
 
   <organization>
-    <name>Metadata Partners, LLC</name>
-    <url>http://www.metadatapartners.com/</url>
+    <name>Cognitect, Inc.</name>
+    <url>https://cognitect.com/</url>
   </organization>
 
   <licenses>
