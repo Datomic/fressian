@@ -982,7 +982,10 @@ public class FressianReader implements Reader, Closeable {
     }
 
     private Object readIterator(ListCollector coll, int length, Iterator iter) {
-        return coll.collect(length, iter);
+        Object ret = coll.collect(length, iter);
+        if (iter.hasNext())
+            throw new IllegalStateException("reader did not fully consume list iterator");
+        return ret;
     }
 
     static Iterator countedIterator(FressianReader rdr, int length) {
