@@ -32,10 +32,23 @@ public class FressianReader implements Reader, Closeable {
         this(is, handlerLookup, true);
     }
 
+    private final ListCollector listCollector;
     public FressianReader(InputStream is, ILookup<Object, ReadHandler> handlerLookup, boolean validateAdler) {
+        this(is,handlerLookup,validateAdler,ARRAYLIST_COLLECTOR);
+    }
+
+    static final ListCollector ARRAYLIST_COLLECTOR = (sz, iter) -> {
+        ArrayList arr = new ArrayList(Math.max(sz, 0));
+        while(iter.hasNext())
+            arr.add(iter.next());
+        return arr;
+    };
+
+    public FressianReader(InputStream is, ILookup<Object, ReadHandler> handlerLookup, boolean validateAdler, ListCollector listCollector) {
         standardExtensionHandlers = Handlers.extendedReadHandlers;
         this.is = new RawInput(is, validateAdler);
         this.handlerLookup = handlerLookup;
+        this.listCollector = listCollector;
         resetCaches();
     }
 
@@ -620,11 +633,11 @@ public class FressianReader implements Reader, Closeable {
                 break;
 
             case Codes.BEGIN_CLOSED_LIST:
-                result = ((ConvertList) getHandler("list")).convertList(readClosedList());
+                result = readClosedList();
                 break;
 
             case Codes.BEGIN_OPEN_LIST:
-                result = ((ConvertList) getHandler("list")).convertList(readOpenList());
+                result = readOpenList();
                 break;
 
             case Codes.TRUE:
@@ -817,31 +830,77 @@ public class FressianReader implements Reader, Closeable {
         return objects;
     }
 
-    private Object[] readClosedList() throws IOException {
-        ArrayList objects = new ArrayList();
-        while (true) {
-            int code = readNextCode();
-            if (code == Codes.END_COLLECTION) {
-                return objects.toArray();
+    private Object readClosedList() throws IOException {
+        return listCollector.collect(-1, TerminatedListIterator.closed(this));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Throwable> void sneakyThrow(Throwable throwable) throws T {
+        throw (T) throwable;
+    }
+
+    static abstract class TerminatedListIterator implements Iterator {
+        Object curr;
+        int curCode = -1;
+        final FressianReader rdr;
+        private TerminatedListIterator(FressianReader rdr) {
+            this.rdr = rdr;
+        }
+
+        abstract int nextCode() throws IOException;
+
+        @Override
+        public boolean hasNext() {
+            if (curCode == -1) {
+                try {
+                    curCode = nextCode();
+                    if (curCode == Codes.END_COLLECTION) {
+                        return false;
+                    } else {
+                        curr = rdr.read(curCode);
+                        return true;
+                    }
+                } catch (IOException e){
+                    sneakyThrow(e);
+                }
             }
-            objects.add(read(code));
+            return (curCode == Codes.END_COLLECTION);
+        }
+
+        @Override
+        public Object next() {
+            Object ret = curr;
+            curCode = -1;
+            return ret;
+        }
+
+        static Iterator closed(FressianReader rdr) {
+            return new TerminatedListIterator(rdr) {
+                @Override
+                int nextCode() throws IOException{
+                    return rdr.readNextCode();
+                }
+            };
+        }
+
+        static Iterator open(FressianReader rdr) {
+            return new TerminatedListIterator(rdr) {
+                @Override
+                int nextCode() throws IOException {
+                    int code;
+                    try {
+                        code = rdr.readNextCode();
+                    } catch (EOFException e) {
+                        code = Codes.END_COLLECTION;
+                    }
+                    return code;
+                }
+            };
         }
     }
 
-    private Object[] readOpenList() throws IOException {
-        ArrayList objects = new ArrayList();
-        int code;
-        while (true) {
-            try {
-                code = readNextCode();
-            } catch (EOFException e) {
-                code = Codes.END_COLLECTION;
-            }
-            if (code == Codes.END_COLLECTION) {
-                return objects.toArray();
-            }
-            objects.add(read(code));
-        }
+    private Object readOpenList() throws IOException {
+        return readIterator(listCollector, -1, TerminatedListIterator.open(this));
     }
 
     public void close() throws IOException {
@@ -885,8 +944,34 @@ public class FressianReader implements Reader, Closeable {
         }
     }
 
-    private List internalReadList(int length) throws IOException {
-        return ((ConvertList) getHandler("list")).convertList(readObjects(length));
+    private Object internalReadList(int length) throws IOException {
+        return readIterator(listCollector, length, countedIterator(this, length));
+    }
+
+    private Object readIterator(ListCollector coll, int length, Iterator iter) {
+        return coll.collect(length, iter);
+    }
+
+    static Iterator countedIterator(FressianReader rdr, int length) {
+        return new Iterator() {
+            int n = 0;
+            @Override
+            public boolean hasNext() {
+                return n < length;
+            }
+
+            @Override
+            public Object next() {
+                Object ret = null;
+                try {
+                    n++;
+                    ret = rdr.readObject();
+                } catch (IOException e) {
+                    sneakyThrow(e);
+                }
+                return ret;
+            }
+        };
     }
 
     private void validateFooter(int calculatedLength, int magicFromStream) throws IOException {

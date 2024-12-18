@@ -9,6 +9,7 @@
 package org.fressian;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public interface Reader {
     public boolean readBoolean() throws IOException;
@@ -17,4 +18,9 @@ public interface Reader {
     public float readFloat() throws IOException;
     public Object readObject() throws IOException;
     public void validateFooter() throws IOException;
+
+    @FunctionalInterface
+    public static interface ListCollector<T> {
+        T collect(int size, Iterator elems);
+    }
 }
