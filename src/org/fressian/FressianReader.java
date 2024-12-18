@@ -897,7 +897,7 @@ public class FressianReader implements Reader, Closeable {
                     sneakyThrow(e);
                 }
             }
-            return (curCode == Codes.END_COLLECTION);
+            return (curCode != Codes.END_COLLECTION);
         }
 
         @Override
