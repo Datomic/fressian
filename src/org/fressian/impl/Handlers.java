@@ -187,20 +187,31 @@ public class Handlers {
         HashMap handlers = new HashMap();
         handlers.put("set", new ReadHandler() {
             public Object read(Reader r, Object tag, int componentCount) throws IOException {
-                Set s = new HashSet();
-                s.addAll((List) r.readObject());
-                return s;
+                return r.readList((sz, iter) ->{
+                    Set s = new HashSet();
+                    while (iter.hasNext())
+                        s.add(iter.next());
+                    return s;
+                });
             }
         });
 
         handlers.put("map", new ReadHandler() {
             public Object read(Reader r, Object tag, int componentCount) throws IOException {
-                Map result = new HashMap();
-                List kvs = (List) (RandomAccess) r.readObject();
-                for (int i = 0; i < kvs.size(); i += 2) {
-                    result.put(kvs.get(i), kvs.get(i + 1));
-                }
-                return result;
+                return r.readList((sz, iter) ->{
+                    Map result = new HashMap();
+                    Object key, val;
+                    while (iter.hasNext()) {
+                        key = iter.next();
+                        if (iter.hasNext()) {
+                            val = iter.next();
+                        } else {
+                            throw new RuntimeException("odd number of kvs");
+                        }
+                        result.put(key, val);
+                    }
+                    return result;
+                });
             }
         });
 

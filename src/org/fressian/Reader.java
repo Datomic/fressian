@@ -17,6 +17,7 @@ public interface Reader {
     public double readDouble() throws IOException;
     public float readFloat() throws IOException;
     public Object readObject() throws IOException;
+    public <T> T readList(ListCollector<T> r) throws IOException;
     public void validateFooter() throws IOException;
 
     @FunctionalInterface

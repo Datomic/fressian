@@ -52,6 +52,39 @@ public class FressianReader implements Reader, Closeable {
         resetCaches();
     }
 
+    @Override
+    public Object readList(ListCollector r) throws IOException {
+        int code = readNextCode();
+        Iterator iter;
+        int len;
+        switch (code) {
+            case Codes.LIST_PACKED_LENGTH_START + 0:
+            case Codes.LIST_PACKED_LENGTH_START + 1:
+            case Codes.LIST_PACKED_LENGTH_START + 2:
+            case Codes.LIST_PACKED_LENGTH_START + 3:
+            case Codes.LIST_PACKED_LENGTH_START + 4:
+            case Codes.LIST_PACKED_LENGTH_START + 5:
+            case Codes.LIST_PACKED_LENGTH_START + 6:
+            case Codes.LIST_PACKED_LENGTH_START + 7:
+                len = code - Codes.LIST_PACKED_LENGTH_START;
+                iter = countedIterator(this, len);
+                break;
+            case Codes.LIST:
+                len = readCount();
+                iter = countedIterator(this, len);
+                break;
+            case Codes.BEGIN_CLOSED_LIST:
+                len = -1; iter = TerminatedListIterator.closed(this);
+                break;
+            case Codes.BEGIN_OPEN_LIST:
+                len = -1; iter = TerminatedListIterator.open(this);
+                break;
+            default:
+                throw expected("list", code);
+        }
+        return readIterator(r, len, iter);
+    }
+
     public boolean readBoolean() throws IOException {
         int code = readNextCode();
 
