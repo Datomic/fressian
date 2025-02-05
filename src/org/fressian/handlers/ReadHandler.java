@@ -12,6 +12,6 @@ import org.fressian.Reader;
 
 import java.io.IOException;
 
-public interface ReadHandler {
+public interface ReadHandler extends IRead {
     public Object read(Reader r, Object tag, int componentCount) throws IOException;
 }

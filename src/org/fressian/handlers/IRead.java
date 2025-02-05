@@ -8,10 +8,4 @@
 
 package org.fressian.handlers;
 
-import org.fressian.handlers.IRead;
-
-import java.util.List;
-
-public interface IConvertList extends IRead {
-    public List convertList(Object[] items);
-}
+public interface IRead {}
