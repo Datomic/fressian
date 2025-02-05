@@ -12,6 +12,6 @@ import org.fressian.handlers.IRead;
 
 import java.util.List;
 
-public interface IConvertList extends IRead {
+public interface ConvertList extends IRead {
     public List convertList(Object[] items);
 }

@@ -22,7 +22,7 @@ public class FressianReader implements Reader, Closeable {
     private ArrayList structCache;
     public final Map standardExtensionHandlers;
     private final ILookup<Object, IRead> handlerLookup;
-    private final IConvertList listConverter;
+    private final ConvertList listConverter;
     private byte[] byteBuffer;
 
     public FressianReader(InputStream is) {
@@ -37,8 +37,8 @@ public class FressianReader implements Reader, Closeable {
         standardExtensionHandlers = Handlers.extendedReadHandlers;
         this.is = new RawInput(is, validateAdler);
         this.handlerLookup = handlerLookup;
-        IConvertList customListConverter = (IConvertList) lookup(handlerLookup, "fressian/list");
-        this.listConverter = ((customListConverter != null) ? customListConverter : defaultListConverter);
+        ConvertList customListConverter = (ConvertList) lookup(handlerLookup, "fressian/list");
+        this.listConverter = ((customListConverter != null) ? customListConverter : (ConvertList) getHandler("list"));
         resetCaches();
     }
 
