@@ -21,18 +21,18 @@ public class FressianReader implements Reader, Closeable {
     private ArrayList priorityCache;
     private ArrayList structCache;
     public final Map standardExtensionHandlers;
-    private final ILookup<Object, ReadHandler> handlerLookup;
+    private final ILookup<Object, IRead> handlerLookup;
     private byte[] byteBuffer;
 
     public FressianReader(InputStream is) {
         this(is, null, true);
     }
 
-    public FressianReader(InputStream is, ILookup<Object, ReadHandler> handlerLookup) {
+    public FressianReader(InputStream is, ILookup<Object, IRead> handlerLookup) {
         this(is, handlerLookup, true);
     }
 
-    public FressianReader(InputStream is, ILookup<Object, ReadHandler> handlerLookup, boolean validateAdler) {
+    public FressianReader(InputStream is, ILookup<Object, IRead> handlerLookup, boolean validateAdler) {
         standardExtensionHandlers = Handlers.extendedReadHandlers;
         this.is = new RawInput(is, validateAdler);
         this.handlerLookup = handlerLookup;
@@ -686,7 +686,7 @@ public class FressianReader implements Reader, Closeable {
     }
 
     private Object handleStruct(Object tag, int fields) throws IOException {
-        ReadHandler h = lookup(handlerLookup, tag);
+        ReadHandler h = (ReadHandler) lookup(handlerLookup, tag);
         if (h == null)
             h = (ReadHandler) standardExtensionHandlers.get(tag);
         if (h == null)
