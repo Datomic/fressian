@@ -22,7 +22,7 @@ public class FressianReader implements Reader, Closeable {
     private ArrayList structCache;
     public final Map standardExtensionHandlers;
     private final ILookup<Object, IRead> handlerLookup;
-    private final IReduceList listReducer;
+    private final IReduceList<Object, List> listReducer;
     private byte[] byteBuffer;
 
     public FressianReader(InputStream is) {
@@ -38,7 +38,7 @@ public class FressianReader implements Reader, Closeable {
         this.is = new RawInput(is, validateAdler);
         this.handlerLookup = handlerLookup;
         IReduceList customListReducer = (IReduceList) lookup(handlerLookup, "fressian/list");
-        this.listReducer = ((customListReducer != null) ? customListReducer : new ListReducer());
+        this.listReducer = ((customListReducer != null) ? customListReducer : defaultListReducer);
         resetCaches();
     }
 
@@ -888,7 +888,7 @@ public class FressianReader implements Reader, Closeable {
         }
     }
 
-    private Object internalReadList(int length) throws IOException {
+    private List internalReadList(int length) throws IOException {
         Object acc = listReducer.init(length);
 
         for (int o = 0; o < length; o++) {
@@ -943,6 +943,21 @@ public class FressianReader implements Reader, Closeable {
         cache.set(index, o);
         return o;
     }
+
+    private static final IReduceList defaultListReducer = new IReduceList<List, List>() {
+        public List init(int length) {
+            return new ArrayList(length);
+        }
+
+        public List step(List acc, Object item) {
+            acc.add(item);
+            return acc;
+        }
+
+        public List complete(List acc) {
+            return acc;
+        }
+    };
 
     public static final Map coreHandlers;
 
