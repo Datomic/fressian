@@ -306,6 +306,19 @@ public class FressianReader implements Reader, Closeable {
         return reducer.complete(acc);
     }
 
+    public Object readWithReducer(IReduceList reducer) throws IOException {
+        int len = readListLength(readNextCode());
+
+        Object acc = reducer.init(len);
+
+        for (int i = 0; i < len; i++) {
+            Object o = readObject();
+            reducer.step(acc, o);
+        }
+
+        return reducer.complete(acc);
+    }
+
     public Object readObject() throws IOException {
         return read(readNextCode());
     }
