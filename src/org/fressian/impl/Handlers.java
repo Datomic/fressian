@@ -195,12 +195,22 @@ public class Handlers {
 
         handlers.put("map", new ReadHandler() {
             public Object read(Reader r, Object tag, int componentCount) throws IOException {
-                Map result = new HashMap();
-                List kvs = (List) (RandomAccess) r.readObject();
-                for (int i = 0; i < kvs.size(); i += 2) {
-                    result.put(kvs.get(i), kvs.get(i + 1));
-                }
-                return result;
+                final IReduceKV<Map,Map> reducer = new IReduceKV<>() {
+                    public Map init(int length) {
+                        return new HashMap();
+                    }
+
+                    public Map step(Map acc, Object key, Object value) {
+                        acc.put(key, value);
+                        return acc;
+                    }
+
+                    public Map complete(Map acc) {
+                        return acc;
+                    }
+                };
+
+                return r.readWithReducer(reducer);
             }
         });
 
