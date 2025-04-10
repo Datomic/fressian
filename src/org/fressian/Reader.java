@@ -8,6 +8,9 @@
 
 package org.fressian;
 
+import org.fressian.handlers.IReduceKV;
+import org.fressian.handlers.IReduceList;
+
 import java.io.IOException;
 
 public interface Reader {
@@ -16,5 +19,7 @@ public interface Reader {
     public double readDouble() throws IOException;
     public float readFloat() throws IOException;
     public Object readObject() throws IOException;
+    public Object readWithReducer(IReduceList reducer) throws IOException;
+    public Object readWithReducer(IReduceKV reducer) throws IOException;
     public void validateFooter() throws IOException;
 }
