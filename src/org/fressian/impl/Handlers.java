@@ -183,6 +183,21 @@ public class Handlers {
         return map;
     }
 
+    private static final IReduceKV<Map, Map> defaultMapReducer = new IReduceKV<Map, Map>() {
+        public Map init(int length) {
+            return new HashMap();
+        }
+
+        public Map step(Map acc, Object key, Object value) {
+            acc.put(key, value);
+            return acc;
+        }
+
+        public Map complete(Map acc) {
+            return acc;
+        }
+    };
+
     static {
         HashMap handlers = new HashMap();
         handlers.put("set", new ReadHandler() {
@@ -195,22 +210,7 @@ public class Handlers {
 
         handlers.put("map", new ReadHandler() {
             public Object read(Reader r, Object tag, int componentCount) throws IOException {
-                final IReduceKV<Map,Map> reducer = new IReduceKV<>() {
-                    public Map init(int length) {
-                        return new HashMap();
-                    }
-
-                    public Map step(Map acc, Object key, Object value) {
-                        acc.put(key, value);
-                        return acc;
-                    }
-
-                    public Map complete(Map acc) {
-                        return acc;
-                    }
-                };
-
-                return r.readWithReducer(reducer);
+                return r.readWithReducer(defaultMapReducer);
             }
         });
 
