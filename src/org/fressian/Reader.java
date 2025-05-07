@@ -16,5 +16,6 @@ public interface Reader {
     public double readDouble() throws IOException;
     public float readFloat() throws IOException;
     public Object readObject() throws IOException;
+    public Object[] readList() throws IOException;
     public void validateFooter() throws IOException;
 }

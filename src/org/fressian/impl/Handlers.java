@@ -196,9 +196,9 @@ public class Handlers {
         handlers.put("map", new ReadHandler() {
             public Object read(Reader r, Object tag, int componentCount) throws IOException {
                 Map result = new HashMap();
-                List kvs = (List) (RandomAccess) r.readObject();
-                for (int i = 0; i < kvs.size(); i += 2) {
-                    result.put(kvs.get(i), kvs.get(i + 1));
+                Object[] kvs = r.readList();
+                for (int i = 0; i < kvs.length; i += 2) {
+                    result.put(kvs[i], kvs[i + 1]);
                 }
                 return result;
             }

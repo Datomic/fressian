@@ -277,6 +277,32 @@ public class FressianReader implements Reader, Closeable {
         return read(readNextCode());
     }
 
+    private int readListLength(int code) throws IOException, IllegalArgumentException {
+        switch (code) {
+            case Codes.LIST_PACKED_LENGTH_START + 0:
+            case Codes.LIST_PACKED_LENGTH_START + 1:
+            case Codes.LIST_PACKED_LENGTH_START + 2:
+            case Codes.LIST_PACKED_LENGTH_START + 3:
+            case Codes.LIST_PACKED_LENGTH_START + 4:
+            case Codes.LIST_PACKED_LENGTH_START + 5:
+            case Codes.LIST_PACKED_LENGTH_START + 6:
+            case Codes.LIST_PACKED_LENGTH_START + 7:
+                return code - Codes.LIST_PACKED_LENGTH_START;
+
+            case Codes.LIST:
+                return readCount();
+
+            default:
+                throw expected("list", code, code);
+        }
+    }
+
+    public Object[] readList() throws IOException {
+        int len = readListLength(readNextCode());
+
+        return readObjects(len);
+    }
+
     private Object read(int code) throws IOException {
         Object result;
         switch (code) {
