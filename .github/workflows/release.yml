@@ -1,7 +1,7 @@
 name: Release on demand
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       releaseVersion:
         description: "Version to release"
