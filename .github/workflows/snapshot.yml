@@ -24,5 +24,5 @@ jobs:
     - name: Publish to Maven
       run: mvn -ntp -B --fail-at-end -Dmaven.test.skip=true clean deploy
       env:
-        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        MAVEN_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
