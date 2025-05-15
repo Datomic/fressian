@@ -9,7 +9,7 @@
   <name>fressian</name>
   <packaging>jar</packaging>
   <description>Fressian is an extensible binary data notation.</description>
-  <url>http://github.com/Datomic/fressian</url>
+  <url>https://github.com/Datomic/fressian</url>
 
   <developers>
     <developer>
@@ -32,7 +32,7 @@
   <licenses>
     <license>
       <name>Eclipse Public License 1.0</name>
-      <url>http://opensource.org/licenses/eclipse-1.0.php</url>
+      <url>https://opensource.org/license/epl-1-0</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -49,25 +49,26 @@
     <maven.compiler.release>8</maven.compiler.release>
   </properties> 
 
+  <!--
   <distributionManagement>
     <snapshotRepository>
-      <!-- This id is linked to the key setup on the CI server -->
       <id>sonatype-nexus-staging-fressian</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
   </distributionManagement>
+  -->
 
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.4.0</version>
+      <version>1.12.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>test.generative</artifactId>
-      <version>0.5.1</version>
+      <version>1.1.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -107,14 +108,11 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.6.0</version>
         <configuration>
-	  <encoding>${project.build.sourceEncoding}</encoding>
+          <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
+      <!--
       <plugin>
-        <!-- do not push pre-deployment SCM changes to upstream repo
-             with maven release plugin; if the release/deploy fails,
-             we're stuck with manually fixing up version numbers, git
-             history, etc -->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.3</version>
@@ -123,20 +121,33 @@
           <localCheckout>true</localCheckout>
         </configuration>
       </plugin>
-
+      -->
+        
       <!-- deploy artifacts to sonatype -->
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.7.0</version>
+        <extensions>true</extensions>
+        <configuration>
+           <publishingServerId>central</publishingServerId>
+           <autoPublish>true</autoPublish>
+        </configuration>
+      </plugin>
+      
+      <!--
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
         <version>1.6.7</version>
         <extensions>true</extensions>
         <configuration>
-          <!-- The server "id" element from settings to use authentication from -->
           <serverId>sonatype-nexus-staging-fressian</serverId>
           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
+      -->
 
       <!-- sign artifacts for deployment -->
       <plugin>
