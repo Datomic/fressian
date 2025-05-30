@@ -49,14 +49,16 @@
     <maven.compiler.release>8</maven.compiler.release>
   </properties> 
 
-  <!--
   <distributionManagement>
+    <repository>
+      <id>central</id>
+      <url>https://central.sonatype.com</url>
+    </repository>
     <snapshotRepository>
-      <id>sonatype-nexus-staging-fressian</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <id>central-snapshot</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
-  -->
 
   <dependencies>
     <dependency>
@@ -75,6 +77,58 @@
 
   <build>
     <sourceDirectory>${basedir}/src</sourceDirectory>
+    
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>3.3.1</version>
+    </plugin>
+    
+    <plugin>
+      <!-- Add Clojure sources to the project's source directories -->
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>build-helper-maven-plugin</artifactId>
+      <version>3.0.0</version>
+      <executions>
+        <execution>
+          <id>add-clojure-source-dirs</id>
+          <phase>generate-sources</phase>
+          <goals>
+            <goal>add-source</goal>
+            <goal>add-resource</goal>
+          </goals>
+          <configuration>
+            <sources>
+              <source>${clojure.source.dir}</source>
+            </sources>
+            <resources>
+              <resource>
+                <directory>${clojure.source.dir}</directory>
+              </resource>
+            </resources>
+          </configuration>
+        </execution>
+        <execution>
+          <id>add-clojure-test-source-dirs</id>
+          <phase>generate-sources</phase>
+          <goals>
+            <goal>add-test-source</goal>
+            <goal>add-test-resource</goal>
+          </goals>
+          <configuration>
+            <sources>
+              <source>${clojure.testSource.dir}</source>
+            </sources>
+            <resources>
+              <resource>
+                <directory>${clojure.testSource.dir}</directory>
+              </resource>
+            </resources>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+    
     <plugins>
       <plugin>
         <groupId>com.theoryinpractise</groupId>
@@ -104,14 +158,17 @@
           </execution>
         </executions>
       </plugin>
+      
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.6.0</version>
         <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
-      <!--
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
@@ -121,7 +178,6 @@
           <localCheckout>true</localCheckout>
         </configuration>
       </plugin>
-      -->
         
       <!-- deploy artifacts to sonatype -->
       <plugin>
@@ -134,20 +190,6 @@
            <autoPublish>true</autoPublish>
         </configuration>
       </plugin>
-      
-      <!--
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.7</version>
-        <extensions>true</extensions>
-        <configuration>
-          <serverId>sonatype-nexus-staging-fressian</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
-        </configuration>
-      </plugin>
-      -->
 
       <!-- sign artifacts for deployment -->
       <plugin>
