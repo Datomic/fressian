@@ -76,60 +76,59 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>${basedir}/src</sourceDirectory>
-    
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-source-plugin</artifactId>
-      <version>3.3.1</version>
-    </plugin>
-    
-    <plugin>
-      <!-- Add Clojure sources to the project's source directories -->
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>build-helper-maven-plugin</artifactId>
-      <version>3.0.0</version>
-      <executions>
-        <execution>
-          <id>add-clojure-source-dirs</id>
-          <phase>generate-sources</phase>
-          <goals>
-            <goal>add-source</goal>
-            <goal>add-resource</goal>
-          </goals>
-          <configuration>
-            <sources>
-              <source>${clojure.source.dir}</source>
-            </sources>
-            <resources>
-              <resource>
-                <directory>${clojure.source.dir}</directory>
-              </resource>
-            </resources>
-          </configuration>
-        </execution>
-        <execution>
-          <id>add-clojure-test-source-dirs</id>
-          <phase>generate-sources</phase>
-          <goals>
-            <goal>add-test-source</goal>
-            <goal>add-test-resource</goal>
-          </goals>
-          <configuration>
-            <sources>
-              <source>${clojure.testSource.dir}</source>
-            </sources>
-            <resources>
-              <resource>
-                <directory>${clojure.testSource.dir}</directory>
-              </resource>
-            </resources>
-          </configuration>
-        </execution>
-      </executions>
-    </plugin>
-    
+    <sourceDirectory>${basedir}/src</sourceDirectory>    
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+      </plugin>
+    
+      <plugin>
+        <!-- Add Clojure sources to the project's source directories -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>add-clojure-source-dirs</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${clojure.source.dir}</source>
+              </sources>
+              <resources>
+                <resource>
+                  <directory>${clojure.source.dir}</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-clojure-test-source-dirs</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+              <goal>add-test-resource</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${clojure.testSource.dir}</source>
+              </sources>
+              <resources>
+                <resource>
+                  <directory>${clojure.testSource.dir}</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
       <plugin>
         <groupId>com.theoryinpractise</groupId>
         <artifactId>clojure-maven-plugin</artifactId>
