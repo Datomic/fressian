@@ -47,7 +47,7 @@ public void clear() {
 
 /**
  *
- * @param k, non-null
+ * @param k non-null
  * @return the integer associated with k, or -1 if not present
  */
 public int get(Object k){
@@ -76,7 +76,7 @@ public int get(Object k){
  * Puts k in the map if it was not already present.
  * Returns -1 if k was freshly added
  * Returns k's index if k was already in the map.
- * @param k, non-null
+ * @param k non-null
  * @return the integer associated with k or -1
  */
 public int oldIndex(Object k) {
@@ -95,7 +95,7 @@ public boolean isEmpty() {
 /**
  * Puts k in the map (if not present) and assigns and returns the index associated with it
  * assigns ints monotonically from 0
- * @param k, non-null
+ * @param k non-null
  * @return the integer associated with k
  */
 public int intern(Object k){
